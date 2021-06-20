@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\product;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
+use Facade\FlareClient\Stacktrace\File;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -35,12 +38,28 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        $imagename = "unknown";
+        $current_date_time = Carbon::now()->timestamp;
+        if($request->hasFile('image')){
+            $file = $request->file('image');
+            $imagename = $current_date_time.".".$file->getClientOriginalExtension();
+
+            if($file->move('upload', $imagename)){
+                echo "Succes";
+            }else{
+                echo "Error Uploading image";
+            }
+        }else{
+            echo "File not found!";
+        }
         product::insert([
             'pname'=>$request->pname,
             'brand'=>$request->brand,
-            'pimage'=>'helloo'
+            'pimage'=>$imagename
         ]);
+
         echo "Product Inserted Sucessfully";
+        return redirect('/product');
     }
 
     /**
@@ -74,7 +93,13 @@ class ProductController extends Controller
      */
     public function update(Request $request, product $product)
     {
-        echo "running on put";
+        $product = product::find($product['id']);
+        $product->pname = $request->pname;
+        $product->brand = $request->brand;
+        $product->save();
+        echo "Product Updated Sucessfully";
+        return redirect('/product');
+
     }
 
     /**
@@ -85,6 +110,14 @@ class ProductController extends Controller
      */
     public function destroy(product $product)
     {
-        //
+        $product->delete();
+        $path = "upload/".$product['pimage'];
+        echo storage_path();
+        // if(Storage::exists('$path')){
+        //     Storage::delete('$path');
+        // }else{
+        //     dd('File does not exists.');
+        // }
+        //return redirect('/product');
     }
 }

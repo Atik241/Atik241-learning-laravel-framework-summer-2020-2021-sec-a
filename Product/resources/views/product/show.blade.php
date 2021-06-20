@@ -14,16 +14,16 @@
 			<td>{{$product['id']}}</td>
         </tr>
         <tr>
-			<td>Name</td>
+			<td>Product Name</td>
             <td>{{$product['pname']}}</td>
         </tr>
         <tr>
-            <td>Password</td>
+            <td>Brand</td>
 			<td>{{$product['brand']}}</td>
         </tr>
         <tr>
-			<td>Cgpa</td>
-            <td>{{$product['pimage']}}</td>
+			<td>Product Image</td>
+            <td><img src="/upload/{{ $product['pimage'] }}" height="150px" width="210px" alt="Product Image"></td>
         </tr>
  	</table>
 </body>
